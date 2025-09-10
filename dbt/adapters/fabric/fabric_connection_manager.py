@@ -23,7 +23,7 @@ from dbt.adapters.fabric import __version__
 from dbt.adapters.fabric.fabric_credentials import FabricCredentials
 
 AZURE_CREDENTIAL_SCOPE = "https://database.windows.net//.default"
-SYNAPSE_SPARK_CREDENTIAL_SCOPE = "DW"
+SYNAPSE_SPARK_CREDENTIAL_SCOPE = "https://database.windows.net/"
 _TOKEN: Optional[AccessToken] = None
 AZURE_AUTH_FUNCTION_TYPE = Callable[[FabricCredentials], AccessToken]
 
@@ -90,7 +90,7 @@ def convert_access_token_to_mswindows_byte_string(token: AccessToken) -> bytes:
 
 def get_synapse_spark_access_token(credentials: FabricCredentials) -> AccessToken:
     """
-    Get an Azure access token by using mspsarkutils
+    Get an Azure access token by using notebookutils
     Parameters
     -----------
     credentials: FabricCredentials
@@ -100,9 +100,9 @@ def get_synapse_spark_access_token(credentials: FabricCredentials) -> AccessToke
     out : AccessToken
         The access token.
     """
-    from notebookutils import mssparkutils
+    import notebookutils
 
-    aad_token = mssparkutils.credentials.getToken(SYNAPSE_SPARK_CREDENTIAL_SCOPE)
+    aad_token = notebookutils.credentials.getToken(SYNAPSE_SPARK_CREDENTIAL_SCOPE)
     expires_on = int(time.time() + 4500.0)
     token = AccessToken(
         token=aad_token,
